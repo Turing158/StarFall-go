@@ -9,7 +9,7 @@ import (
 )
 
 const exp = time.Hour * 24
-const key = "StarFall"
+const jwtKey = "StarFall"
 
 func GenerateToken(user string) (token string, err error) {
 	claims := jwt.MapClaims{
@@ -17,13 +17,13 @@ func GenerateToken(user string) (token string, err error) {
 		"exp":  time.Now().Add(exp).Unix(),
 	}
 	claimWithSign := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return claimWithSign.SignedString(key)
+	return claimWithSign.SignedString(jwtKey)
 }
 
 func ParseToken(token string) (claim jwt.MapClaims, err error) {
 	claimP := &jwt.MapClaims{}
 	_, err = jwt.ParseWithClaims(token, claim, func(token *jwt.Token) (interface{}, error) {
-		return key, nil
+		return jwtKey, nil
 	})
 	return *claimP, err
 }
@@ -35,6 +35,8 @@ var passUrl = []string{
 
 func TokenIntercept() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		c.Next()
+		return
 
 		url := c.Request.URL.Path
 		for s := range passUrl {

@@ -16,6 +16,7 @@ func main() {
 	engine.Use(util.TokenIntercept())
 	engine.GET("/", func(context *gin.Context) {
 		context.JSON(200, entity.Result{}.Ok())
+
 	})
 	engine.NoRoute(func(context *gin.Context) {
 		context.JSON(404, entity.Result{}.ErrorWithMsg("Unknown Path"))
