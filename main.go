@@ -6,24 +6,28 @@ import (
 	"log"
 	"starfall-go/controller"
 	"starfall-go/entity"
+	"starfall-go/intercept"
 	"starfall-go/util"
 )
 
 func main() {
 	engine := gin.Default()
+	util.InitRedis()
+	defer util.CloseRedis()
 	engine.Use(cors.Default())
 	engine.Use(Logger())
-	engine.Use(util.TokenIntercept())
+	engine.Use(intercept.TokenIntercept())
 	engine.GET("/", func(context *gin.Context) {
 		context.JSON(200, entity.Result{}.Ok())
-
 	})
+
 	engine.NoRoute(func(context *gin.Context) {
 		context.JSON(404, entity.Result{}.ErrorWithMsg("Unknown Path"))
 	})
 
 	//注册控制类
 	controller.UserController{}.Register(engine)
+	controller.OtherController{}.Register(engine)
 	controller.NoticeController{}.Register(engine)
 
 	engine.Run()

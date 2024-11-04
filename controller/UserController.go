@@ -11,5 +11,6 @@ type UserController struct {
 }
 
 func (UserController) Register(engine *gin.Engine) {
-
+	engine.POST("/login", userService.Login)
+	engine.POST("/getUserInfo", userService.GetUserInfo)
 }
