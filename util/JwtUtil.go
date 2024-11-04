@@ -4,12 +4,14 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"starfall-go/dao"
 	"starfall-go/entity"
 	"time"
 )
 
 const exp = time.Hour * 24
-const jwtKey = "StarFall"
+
+var jwtKey = []byte("StarFall")
 
 func GenerateToken(user string) (token string, err error) {
 	claims := jwt.MapClaims{
@@ -21,22 +23,23 @@ func GenerateToken(user string) (token string, err error) {
 }
 
 func ParseToken(token string) (claim jwt.MapClaims, err error) {
-	claimP := &jwt.MapClaims{}
-	_, err = jwt.ParseWithClaims(token, claim, func(token *jwt.Token) (interface{}, error) {
+	_, err = jwt.ParseWithClaims(token, &claim, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-	return *claimP, err
+	return claim, err
 }
 
 var passUrl = []string{
 	"/",
+	"/login",
 	"/findAllNotice",
 }
+var dbUser = dao.UserDao{}
 
 func TokenIntercept() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Next()
-		return
+		//c.Next()
+		//return
 
 		url := c.Request.URL.Path
 		for s := range passUrl {
@@ -58,7 +61,11 @@ func TokenIntercept() gin.HandlerFunc {
 			return
 		}
 		//token刷新
-		//newToken := ""
+		//userObj := dbUser.FindUserWithUserOrEmail(claim["user"].(string))
+		//if userObj.User == ""{
+		//	c.AbortWithStatusJSON(http.StatusUnauthorized, result.ErrorWithMsg("The user was exist in the old Token"))
+		//}
+		//newToken, _ := GenerateToken(userObj.User)
 		//c.Header("Authorization", newToken)
 
 		c.Next()
