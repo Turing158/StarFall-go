@@ -1,10 +1,11 @@
 package entity
 
-type User struct {
+type UserOut struct {
 	Avatar   string `json:"avatar,omitempty"`
 	Birthday string `json:"birthday,omitempty"`
 	Email    string `json:"email,omitempty"`
 	Exp      int64  `json:"exp,omitempty"`
+	MaxExp   int64  `json:"maxExp"`
 	Gender   int64  `json:"gender,omitempty"`
 	Level    int64  `json:"level,omitempty"`
 	Name     string `json:"name,omitempty"`

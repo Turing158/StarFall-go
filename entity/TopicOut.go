@@ -10,7 +10,7 @@ type TopicOut struct {
 	Download   string `json:"download,omitempty"`
 	EnTitle    string `json:"enTitle,omitempty"`
 	Exp        int64  `json:"exp,omitempty"`
-	ID         int64  `json:"id,omitempty"`
+	ID         int64  `json:"id,omitempty" gorm:"primaryKey"`
 	Label      string `json:"label,omitempty"`
 	Language   string `json:"language,omitempty"`
 	Level      int64  `json:"level,omitempty"`
@@ -19,7 +19,7 @@ type TopicOut struct {
 	OldID      int64  `json:"oldId,omitempty"`
 	Source     string `json:"source,omitempty"`
 	Title      string `json:"title,omitempty"`
-	TopicTitle string `json:"topicTitle,omitempty"`
+	TopicTitle string `json:"topicTitle,omitempty" gorm:"column:topicTitle"`
 	User       string `json:"user,omitempty"`
 	Version    string `json:"version,omitempty"`
 	View       int64  `json:"view,omitempty"`
