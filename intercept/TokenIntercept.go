@@ -11,8 +11,11 @@ import (
 
 var passUrl = []string{
 	"/",
+	"/getCodeImage",
 	"/login",
 	"/findAllNotice",
+	"/findAllTopic",
+	"/findTopicVersion",
 }
 
 var dbUser = dao.UserDao{}
@@ -35,7 +38,7 @@ func TokenIntercept() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, result.ErrorWithMsg("The token is null"))
 			return
 		}
-		claim, err := util.ParseToken(token)
+		claim, userClaim, err := util.ParseToken(token)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, result.ErrorWithMsg(err.Error()))
 			return
@@ -46,11 +49,13 @@ func TokenIntercept() gin.HandlerFunc {
 			return
 		}
 		//token刷新
-		userObj := dbUser.FindUserWithUserOrEmail(claim["user"].(string))
+		userObj := dbUser.FindUserWithUserOrEmail(userClaim.User)
 		if userObj.User == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, result.ErrorWithMsg("The user was exist in the old Token"))
+			return
 		}
-		newToken := util.GenerateToken(userObj.User)
+		newClaim := util.UserClaim{User: userObj.User, Email: userObj.Email, Role: userObj.Role}
+		newToken := util.GenerateToken(newClaim)
 		c.Header("Authorization", newToken)
 
 		c.Next()
