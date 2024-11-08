@@ -9,3 +9,4 @@
 - go get github.com/dgrijalva/jwt-go
 - go get -u github.com/go-redis/redis
 - go get -u github.com/mojocn/base64Captcha
+-  go get github.com/jordan-wright/email
