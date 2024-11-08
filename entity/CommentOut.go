@@ -8,6 +8,6 @@ type CommentOut struct {
 	Name    string `json:"name,omitempty"`
 	Avatar  string `json:"avatar,omitempty"`
 	Level   int    `json:"level,omitempty"`
-	exp     int    `json:"exp,omitempty"`
-	maxExp  int    `json:"maxExp,omitempty"`
+	Exp     int    `json:"exp,omitempty"`
+	MaxExp  int    `json:"maxExp,omitempty"`
 }
