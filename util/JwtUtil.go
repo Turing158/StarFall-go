@@ -23,6 +23,20 @@ func GenerateToken(claim UserClaim) (token string) {
 		"role":  claim.Role,
 		"exp":   time.Now().Add(exp).Unix(),
 	}
+	return Generate(claims)
+}
+
+func GenerateTokenWithExpire(claim UserClaim, expire time.Duration) (token string) {
+	claims := jwt.MapClaims{
+		"user":  claim.User,
+		"email": claim.Email,
+		"role":  claim.Role,
+		"exp":   time.Now().Add(expire).Unix(),
+	}
+	return Generate(claims)
+}
+
+func Generate(claims jwt.MapClaims) (token string) {
 	claimWithSign := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := claimWithSign.SignedString(jwtKey)
 	if err != nil {

@@ -48,6 +48,10 @@ func TokenIntercept() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, result.ErrorWithMsg("The token has expired"))
 			return
 		}
+		if userClaim.Role == "@ForgetPassword" && url == "/forgetPassword" {
+			c.Next()
+			return
+		}
 		//token刷新
 		userObj := dbUser.FindUserWithUserOrEmail(userClaim.User)
 		if userObj.User == "" {
