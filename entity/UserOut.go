@@ -1,5 +1,7 @@
 package entity
 
+import "starfall-go/util"
+
 type UserOut struct {
 	Avatar   string `json:"avatar,omitempty"`
 	Birthday string `json:"birthday,omitempty"`
@@ -12,4 +14,8 @@ type UserOut struct {
 	Password string `json:"password,omitempty"`
 	Role     string `json:"role,omitempty"`
 	User     string `json:"user,omitempty" gorm:"primaryKey"`
+}
+
+func (u UserOut) OrderMaxExp() {
+	u.MaxExp = util.GetMaxExp(u.Level)
 }
