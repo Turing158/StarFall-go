@@ -14,3 +14,14 @@ func RandomStr(length int) string {
 	}
 	return string(b)
 }
+
+func IntToBool(i int) bool {
+	if i > 0 {
+		return true
+	}
+	return false
+}
+
+func Int64ToBool(i int64) bool {
+	return IntToBool(int(i))
+}
