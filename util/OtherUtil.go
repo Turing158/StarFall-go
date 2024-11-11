@@ -1,6 +1,9 @@
 package util
 
-import "math/rand"
+import (
+	"math/rand"
+	"time"
+)
 
 const UpperStr = "ABCDEFGHIJCKLMNOPQRSTUVWXYZ"
 const lowerStr = "abcdefghijklmnopqrstuvwxyz"
@@ -24,4 +27,9 @@ func IntToBool(i int) bool {
 
 func Int64ToBool(i int64) bool {
 	return IntToBool(int(i))
+}
+
+func IsContinualDate(date1, date2 time.Time) bool {
+	//原理：通过time.Sub函数，计算两个时间之间的秒数，然后
+	return date1.Sub(date2)/(24*time.Hour) == 1
 }
