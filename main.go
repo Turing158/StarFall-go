@@ -26,9 +26,10 @@ func main() {
 	})
 
 	//注册控制类
-	controller.UserController{}.Register(engine)
-	controller.OtherController{}.Register(engine)
-	controller.NoticeController{}.Register(engine)
+	controller.UserControllerRegister(engine)
+	controller.OtherControllerRegister(engine)
+	controller.NoticeControllerRegister(engine)
+	controller.TopicControllerRegister(engine)
 
 	engine.Run()
 }
