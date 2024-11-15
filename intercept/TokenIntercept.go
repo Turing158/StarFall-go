@@ -13,9 +13,19 @@ var passUrl = []string{
 	"/",
 	"/getCodeImage",
 	"/login",
+	"/register",
+	"/getEmailCode",
+	"/findUserByUser",
 	"/findAllNotice",
 	"/findAllTopic",
+	"/getTopicInfo",
+	"/findAllTopicByUser",
 	"/findTopicVersion",
+	"/findCommentByTopic",
+	"/search",
+	"/checkForgetPassword",
+
+	///message,/message/**,
 }
 
 var dbUser = dao.UserDao{}
