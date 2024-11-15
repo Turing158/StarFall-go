@@ -7,9 +7,6 @@ import (
 
 var noticeService = service.NoticeService{}
 
-type NoticeController struct {
-}
-
-func (NoticeController) Register(engine *gin.Engine) {
+func NoticeControllerRegister(engine *gin.Engine) {
 	engine.Any("/findAllNotice", noticeService.FindAllNotice)
 }
