@@ -34,13 +34,13 @@ func (UserService) Login(c *gin.Context) {
 				c.JSON(200, result.OkWithObj(token))
 				return
 			}
-			c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("password is wrong"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("password is wrong"))
 			return
 		}
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("account is not exist"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("account is not exist"))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("code is wrong"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("code is wrong"))
 }
 
 func (UserService) GetUserInfo(c *gin.Context) {
@@ -48,7 +48,7 @@ func (UserService) GetUserInfo(c *gin.Context) {
 	_, claim, _ := util.ParseToken(token)
 	user := claim.User
 	if user == "" {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The User is null in the token"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The User is null in the token"))
 		return
 	}
 	userObj := userDao.FindUserWithUser(user)
@@ -86,16 +86,16 @@ func (UserService) Register(c *gin.Context) {
 					c.JSON(200, result.Ok())
 					return
 				}
-				c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The Email code is wrong"))
+				c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email code is wrong"))
 				return
 			}
-			c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The user already exists"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The user already exists"))
 			return
 		}
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The Email already exists"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email already exists"))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The code is wrong"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The code is wrong"))
 }
 
 func getEmailCode(c *gin.Context, role string) {
@@ -111,7 +111,7 @@ func getEmailCode(c *gin.Context, role string) {
 		c.JSON(200, result.Ok())
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The email cannot be empty"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The email cannot be empty"))
 }
 
 func (UserService) GetRegEmailCode(c *gin.Context) {
@@ -149,13 +149,13 @@ func (UserService) CheckForgetPassword(c *gin.Context) {
 				redisUtil.Del("email:" + email)
 				c.JSON(200, result.OkWithObj(token))
 			}
-			c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The Email is not exists"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email is not exists"))
 			return
 		}
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The Email code is wrong"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email code is wrong"))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The code is wrong"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The code is wrong"))
 }
 
 func (UserService) ForgerPassword(c *gin.Context) {
@@ -163,12 +163,12 @@ func (UserService) ForgerPassword(c *gin.Context) {
 	password := c.PostForm("password")
 	_, claim, _ := util.ParseToken(token)
 	if claim.Role != "@ForgetPassword" {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("Not allow"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("Not allow"))
 		return
 	}
 	user := userDao.FindUserWithUserOrEmail(claim.Email)
 	if user.User == "" {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("No user exists"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("No user exists"))
 		return
 	}
 	passwordAes, _ := util.AesEncrypt(password)
@@ -191,7 +191,7 @@ func (UserService) SettingInfo(c *gin.Context) {
 		c.JSON(200, result.OkWithObj(user))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The code is wrong"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The code is wrong"))
 }
 
 func (UserService) SettingPassword(c *gin.Context) {
@@ -210,12 +210,12 @@ func (UserService) SettingPassword(c *gin.Context) {
 				userDao.UpdatePassword(user.User, newPasswordAes)
 				c.JSON(200, result.Ok())
 			}
-			c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The OldPassword is wrong"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The OldPassword is wrong"))
 		}
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The token is not exist user"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The token is not exist user"))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The code is wrong"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The code is wrong"))
 }
 
 func (UserService) SettingAvatar(c *gin.Context) {
@@ -243,12 +243,12 @@ func (UserService) SettingEmail(c *gin.Context) {
 				newToken := util.GenerateToken(newClaim)
 				c.JSON(200, result.OkWithObj(newToken))
 			}
-			c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The Old Email code is wrong"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Old Email code is wrong"))
 		}
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The New Email code is wrong"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The New Email code is wrong"))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The Old Email code is wrong"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Old Email code is wrong"))
 }
 
 func (UserService) FindUserByUser(c *gin.Context) {
@@ -259,7 +259,7 @@ func (UserService) FindUserByUser(c *gin.Context) {
 		c.JSON(200, result.OkWithObj(userObj))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("The User is not exist"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The User is not exist"))
 }
 
 var signInDao = dao.SignInDao{}
@@ -336,5 +336,5 @@ func (UserService) SignIn(c *gin.Context) {
 		c.JSON(200, result.OkWithObj(addExp))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusNotAcceptable, result.ErrorWithMsg("You have already signed it today"))
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("You have already signed it today"))
 }
