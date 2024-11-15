@@ -89,12 +89,43 @@ func (TopicDao) FindLikeLogByTopicIdAndUser(id int, user string) (likeLog entity
 	return
 }
 
-func SearchByKey() {
-
+func (TopicDao) SearchByKey(key, classification string, offset int) (searches []entity.Search) {
+	dbTopic.
+		Select("t.id,"+
+			"t.title,"+
+			"t.label,"+
+			"regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(content,'<.+?>',''),'\\\\*\\\\*(.*?)\\\\*\\\\*', '$1'),'\\\\[(.*?)\\\\]\\\\((.*?)\\\\)', '$1'),'\\>\\\\s', ''),'#', ''),'\\\\*{3}|\\\\*\\\\s\\\\*\\\\s\\\\*', '') as content,"+
+			"t.view,"+
+			"t.comment,"+
+			"t.date,"+
+			"t.user,"+
+			"u.name").
+		Joins("join topicitem ti on t.id = ti.topicId join user u on t.user = u.user").
+		Where(checkClassificationToWhereStr(classification), key).
+		Order("t.date desc").
+		Limit(10).
+		Offset(offset).
+		Find(&searches)
+	return
 }
 
-func CountSearchByKey() {
+func (TopicDao) CountSearchByKey(key, classification string) (count int64) {
+	dbTopic.
+		Joins("join topicitem ti on t.id = ti.topicId join user u on t.user = u.user").
+		Where(checkClassificationToWhereStr(classification), key).
+		Count(&count)
+	return
+}
 
+func checkClassificationToWhereStr(classification string) string {
+	if classification == "作者" {
+		return "u.name like ?"
+	} else if classification == "主题" {
+		return "t.title like ?"
+	} else if classification == "内容" {
+		return "ti.content like ?"
+	}
+	return "t.title like ? or u.name like ? or ti.content like ?"
 }
 
 func (TopicDao) InsertLike(likeLog entity.LikeLog) bool {
@@ -172,7 +203,7 @@ func (TopicDao) DeleteLikeLog(topicId int) bool {
 	return util.Int64ToBool(re)
 }
 
-func (TopicDao) deleteCommentByTopicId(topicId int) bool {
+func (TopicDao) DeleteCommentByTopicId(topicId int) bool {
 	re := dbComment.Where("topicId = ?", topicId).Delete(&entity.Comment{}).RowsAffected
 	return util.Int64ToBool(re)
 }
