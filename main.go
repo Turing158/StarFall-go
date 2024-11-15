@@ -14,7 +14,15 @@ func main() {
 	engine := gin.Default()
 	util.InitRedis()
 	defer util.CloseRedis()
-	engine.Use(cors.Default())
+	//engine.Use(cors.Default())
+	config := cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}
+	engine.Use(cors.New(config))
 	engine.Use(Logger())
 	engine.Use(intercept.TokenIntercept())
 	engine.GET("/", func(context *gin.Context) {
@@ -31,7 +39,7 @@ func main() {
 	controller.NoticeControllerRegister(engine)
 	controller.TopicControllerRegister(engine)
 
-	engine.Run()
+	engine.Run(":9090")
 }
 
 func Logger() gin.HandlerFunc {
