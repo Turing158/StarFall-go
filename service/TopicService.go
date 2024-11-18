@@ -26,6 +26,12 @@ func (TopicService) FindAllTopic(c *gin.Context) {
 	}
 	label := c.PostForm("label")
 	version := c.PostForm("version")
+	if label == "无" {
+		label = ""
+	}
+	if version == "无" {
+		version = ""
+	}
 	topics := topicDao.FindAllTopic((page-1)*10, label, version)
 	topicsNum := topicDao.CountAllTopic(label, version)
 	c.JSON(200, result.OkWithObj(gin.H{
@@ -48,6 +54,7 @@ func (TopicService) GetTopicInfo(c *gin.Context) {
 			topicDao.UpdateTopicView(int64(id), topicOut.View+1)
 		}
 		c.JSON(200, result.OkWithObj(topicOut))
+		return
 	}
 	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("This topic does not exist"))
 	return
