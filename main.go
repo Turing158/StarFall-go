@@ -19,7 +19,7 @@ func main() {
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
+		ExposeHeaders:    []string{"Content-Length", "Base64Img", "Captcha-Id", "Authorization"},
 		AllowCredentials: true,
 	}
 	engine.Use(cors.New(config))
