@@ -15,7 +15,7 @@ type OtherService struct {
 var redisUtil = util.RedisUtil{}
 
 func (OtherService) GetCodeImage(c *gin.Context) {
-	oldId := c.Query("captcha_id")
+	oldId := c.GetHeader("Captcha-Id")
 	if oldId != "" {
 		redisUtil.Del("captcha:" + oldId)
 	}
@@ -29,6 +29,7 @@ func (OtherService) GetCodeImage(c *gin.Context) {
 		return
 	}
 	c.Header("Content-length", strconv.Itoa(len(data)))
-	c.Header("captcha_id", id)
+	c.Header("Base64Img", base64s)
+	c.Header("Captcha-Id", id)
 	c.Data(200, "image/png", data)
 }
