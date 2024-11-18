@@ -9,9 +9,7 @@ type NoticeDao struct {
 }
 type Notice entity.Notice
 
-var dbNotice = util.DB.Table("notice")
-
 func (NoticeDao) FindAllNotice() (notices []Notice) {
-	dbNotice.Find(&notices)
+	util.DB.Table("notice").Find(&notices)
 	return notices
 }
