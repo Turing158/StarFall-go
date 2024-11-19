@@ -18,7 +18,7 @@ func main() {
 	config := cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "Captcha-Id"},
 		ExposeHeaders:    []string{"Content-Length", "Base64Img", "Captcha-Id", "Authorization"},
 		AllowCredentials: true,
 	}
