@@ -1,5 +1,7 @@
 package util
 
+import "starfall-go/entity"
+
 func GetMaxExp(level int64) int64 {
 	switch level {
 	case 1:
@@ -28,4 +30,12 @@ func GetMaxExp(level int64) int64 {
 
 func CheckAndLevelUp(currentExp, currentLevel int64) int64 {
 	return currentExp - GetMaxExp(currentLevel)
+}
+
+func SetUserMaxExp(user *entity.UserOut) {
+	user.MaxExp = GetMaxExp(user.Level)
+}
+
+func SetTopicUserMaxExp(topicOut *entity.TopicOut) {
+	topicOut.MaxExp = GetMaxExp(topicOut.Level)
 }

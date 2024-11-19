@@ -53,6 +53,7 @@ func (TopicService) GetTopicInfo(c *gin.Context) {
 		if token != "" {
 			topicDao.UpdateTopicView(int64(id), topicOut.View+1)
 		}
+		util.SetTopicUserMaxExp(&topicOut)
 		c.JSON(200, result.OkWithObj(topicOut))
 		return
 	}
