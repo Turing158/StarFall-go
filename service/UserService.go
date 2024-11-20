@@ -52,7 +52,7 @@ func (UserService) GetUserInfo(c *gin.Context) {
 		return
 	}
 	userObj := userDao.FindUserWithUser(user)
-	util.SetUserMaxExp(&userObj)
+	userObj.MaxExp = util.GetMaxExp(userObj.Level)
 	c.JSON(200, result.OkWithObj(userObj))
 }
 
@@ -187,7 +187,7 @@ func (UserService) SettingInfo(c *gin.Context) {
 		_, claim, _ := util.ParseToken(token)
 		//更新用户操作
 		user := userDao.FindUserWithUser(claim.User)
-		util.SetUserMaxExp(&user)
+		user.MaxExp = util.GetMaxExp(user.Level)
 		c.JSON(200, result.OkWithObj(user))
 		return
 	}
@@ -255,7 +255,7 @@ func (UserService) FindUserByUser(c *gin.Context) {
 	user := c.PostForm("user")
 	userObj := userDao.FindUserWithUser(user)
 	if userObj.User != "" {
-		util.SetUserMaxExp(&userObj)
+		userObj.MaxExp = util.GetMaxExp(userObj.Level)
 		c.JSON(200, result.OkWithObj(userObj))
 		return
 	}

@@ -53,7 +53,7 @@ func (TopicService) GetTopicInfo(c *gin.Context) {
 		if token != "" {
 			topicDao.UpdateTopicView(int64(id), topicOut.View+1)
 		}
-		util.SetTopicUserMaxExp(&topicOut)
+		topicOut.MaxExp = util.GetMaxExp(topicOut.Level)
 		c.JSON(200, result.OkWithObj(topicOut))
 		return
 	}
@@ -82,7 +82,7 @@ func (TopicService) FindTopicVersion(c *gin.Context) {
 }
 
 func (TopicService) GetLike(c *gin.Context) {
-	topicIdStr := c.PostForm("topicId")
+	topicIdStr := c.PostForm("id")
 	topicId, err := strconv.Atoi(topicIdStr)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("ID is not a number"))
@@ -108,7 +108,7 @@ func (TopicService) GetLike(c *gin.Context) {
 
 func (TopicService) Like(c *gin.Context) {
 	token := c.GetHeader("Authorization")
-	idStr := c.PostForm("topicId")
+	idStr := c.PostForm("id")
 	likeStr := c.PostForm("like")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -160,6 +160,9 @@ func (TopicService) FindCommentById(c *gin.Context) {
 		return
 	}
 	comments := topicDao.FindCommentByTopicId(id, (page-1)*10)
+	for i := range comments {
+		comments[i].MaxExp = util.GetMaxExp(comments[i].Level)
+	}
 	count := topicDao.CountCommentByTopicId(id)
 	c.JSON(200, result.OkWithObj(gin.H{
 		"comments": comments,
