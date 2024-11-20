@@ -154,11 +154,11 @@ func (TopicDao) UpdateTopicComment(id, comment int64) bool {
 }
 
 func (TopicDao) UpdateLikeStateByTopicAndUser(id, status int64, user, date string) bool {
-	re := util.DB.Table("likelog l").Where("topicId = ?", id).First(&entity.LikeLog{}).Updates(entity.LikeLog{
-		User:   user,
-		Date:   date,
-		Status: status,
-	}).RowsAffected
+	re := util.DB.Table("likelog l").Where("topicId = ? and user = ?", id, user).
+		First(&entity.LikeLog{}).
+		Update("date", date).
+		Update("status", status).
+		RowsAffected
 	return util.Int64ToBool(re)
 }
 

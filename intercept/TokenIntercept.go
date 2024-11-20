@@ -24,7 +24,7 @@ var passUrl = []string{
 	"/findCommentByTopic",
 	"/search",
 	"/checkForgetPassword",
-
+	"/getLike",
 	///message,/message/**,
 }
 
