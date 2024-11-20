@@ -267,7 +267,13 @@ var signInDao = dao.SignInDao{}
 func (UserService) FindAlreadySignIn(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	_, claim, _ := util.ParseToken(token)
-	signIns := signInDao.FindAllSignInByUser(claim.User)
+	pageStr := c.PostForm("page")
+	page, error := strconv.Atoi(pageStr)
+	if error != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The page is not a number"))
+		return
+	}
+	signIns := signInDao.FindAllSignInByUserAndOffset(claim.User, (page-1)*6)
 	var err bool
 	var count int
 	if len(signIns) == 1 {
