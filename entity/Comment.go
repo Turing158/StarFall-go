@@ -6,6 +6,6 @@ type Comment struct {
 	OldDate    string `json:"oldDate,omitempty"`
 	OldTopicID int64  `json:"oldTopicId,omitempty"`
 	OldUser    string `json:"oldUser,omitempty"`
-	TopicID    int64  `json:"topicId,omitempty"`
+	TopicID    int64  `json:"topicId,omitempty"  gorm:"column:topicId"`
 	User       string `json:"user,omitempty"`
 }
