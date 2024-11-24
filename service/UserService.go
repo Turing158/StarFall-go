@@ -281,6 +281,7 @@ func (UserService) FindAlreadySignIn(c *gin.Context) {
 	} else if len(signIns) == 0 {
 		count = 0
 	} else {
+		count = 1
 		timeStr := "2006-01-02"
 		for i := 0; i < len(signIns)-1; i++ {
 			newDate, err1 := time.Parse(timeStr, signIns[i].Date)
@@ -331,7 +332,7 @@ func (UserService) SignIn(c *gin.Context) {
 			exp = diffExp
 			level++
 		}
-		msg = "[获得" + strconv.Itoa(int(exp)) + "点经验] " + msg
+		msg = "[获得" + strconv.Itoa(int(addExp)) + "点经验] " + msg
 		signInDao.InsertSignIn(entity.SignIn{
 			User:    user.User,
 			Date:    date,

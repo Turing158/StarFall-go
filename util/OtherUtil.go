@@ -31,5 +31,6 @@ func Int64ToBool(i int64) bool {
 
 func IsContinualDate(date1, date2 time.Time) bool {
 	//原理：通过time.Sub函数，计算两个时间之间的秒数，然后
-	return date1.Sub(date2)/(24*time.Hour) == 1
+	re := int(date1.Sub(date2) / (24 * time.Hour))
+	return re == 1 || re == -1
 }
