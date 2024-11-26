@@ -174,19 +174,19 @@ func (TopicService) AppendComment(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	_, claim, _ := util.ParseToken(token)
 	codeStr := c.PostForm("code")
-	idStr := c.PostForm("topicId")
+	idStr := c.PostForm("id")
 	content := c.PostForm("content")
 	id, _ := strconv.Atoi(idStr)
 	codeId, code := util.GetCodeAndIdByCode(codeStr)
 	if util.VerifyCaptchaCode(codeId, code) {
 		date := time.Now().Format("2006-01-02 15:04:05")
-		topicDao.InsertComment(entity.Comment{TopicID: int64(id), Date: date, User: claim.User, Content: content})
+		topicDao.InsertComment(entity.CommentCreate{TopicID: int64(id), Date: date, User: claim.User, Content: content})
 		count := topicDao.CountCommentByTopicId(id)
 		topicDao.UpdateTopicComment(int64(id), count)
 		c.JSON(200, result.OkWithObj(count))
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusBadRequest, "The code is wrong")
+	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The code is wrong"))
 }
 
 func (TopicService) DeleteComment(c *gin.Context) {

@@ -124,22 +124,22 @@ func checkClassificationToWhereStr(classification string) string {
 }
 
 func (TopicDao) InsertLike(likeLog entity.LikeLog) bool {
-	re := util.DB.Table("likelog l").Create(likeLog).RowsAffected
+	re := util.DB.Table("likelog").Create(likeLog).RowsAffected
 	return util.Int64ToBool(re)
 }
 
-func (TopicDao) InsertComment(comment entity.Comment) bool {
-	re := util.DB.Table("comment c").Create(comment).RowsAffected
+func (TopicDao) InsertComment(comment entity.CommentCreate) bool {
+	re := util.DB.Table("comment").Create(comment).RowsAffected
 	return util.Int64ToBool(re)
 }
 
 func (TopicDao) InsertTopic(topic entity.Topic) bool {
-	re := util.DB.Table("topic t").Create(topic).RowsAffected
+	re := util.DB.Table("topic").Create(topic).RowsAffected
 	return util.Int64ToBool(re)
 }
 
 func (TopicDao) InsertTopicItem(topicItem entity.TopicItem) bool {
-	re := util.DB.Table("topicItem ti").Create(topicItem).RowsAffected
+	re := util.DB.Table("topicItem").Create(topicItem).RowsAffected
 	return util.Int64ToBool(re)
 }
 
