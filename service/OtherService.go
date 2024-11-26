@@ -17,7 +17,10 @@ var redisUtil = util.RedisUtil{}
 func (OtherService) GetCodeImage(c *gin.Context) {
 	oldId := c.GetHeader("Captcha-Id")
 	if oldId != "" {
-		redisUtil.Del("captcha:" + oldId)
+		key := "captcha:" + oldId
+		if redisUtil.Has(key) {
+			redisUtil.Del(key)
+		}
 	}
 	id, base64s, _, err := util.CreateAndSaveCaptcha()
 	if err != nil {

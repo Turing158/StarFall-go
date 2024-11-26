@@ -92,3 +92,7 @@ func (RedisUtil) GetObj(key string, obj interface{}) any {
 func (RedisUtil) Del(key string) error {
 	return RedisClient.Del(redisKey + key).Err()
 }
+
+func (RedisUtil) Has(key string) bool {
+	return RedisClient.Exists(redisKey+key).Val() > 0
+}
