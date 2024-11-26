@@ -69,9 +69,10 @@ func (UserService) Register(c *gin.Context) {
 			if userDao.FindUserWithUser(user).User == "" {
 				emailCodeInRedis := redisUtil.Get("emailCode:" + email)
 				if emailCodeInRedis == emailCode {
+					passwordCode, _ := util.AesEncrypt(password)
 					userObj := entity.User{
 						User:     user,
-						Password: password,
+						Password: passwordCode,
 						Email:    email,
 						Birthday: time.Now().Format("2006-01-02"),
 						Gender:   0,
@@ -100,21 +101,32 @@ func (UserService) Register(c *gin.Context) {
 
 func getEmailCode(c *gin.Context, role string) {
 	email := c.PostForm("email")
-	if email != "" {
-		code := strings.ToUpper(util.RandomStr(6))
-		redisUtil.SetWithExpireTime("emailCode:"+email, code, 10*time.Minute)
-		if role == "注册" {
-			util.SendRegEmailCode(email, code)
-		} else {
-			util.SendCustomEmailCode(email, code, role)
-		}
-		c.JSON(200, result.Ok())
-		return
+	code := strings.ToUpper(util.RandomStr(6))
+	redisUtil.SetWithExpireTime("emailCode:"+email, code, 10*time.Minute)
+	if role == "注册" {
+		util.SendRegEmailCode(email, code)
+	} else {
+		util.SendCustomEmailCode(email, code, role)
 	}
-	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The email cannot be empty"))
+	c.JSON(200, result.Ok())
+}
+
+func existEmail(email string) bool {
+	if userDao.FindUserWithEmail(email).User != "" {
+		return true
+	}
+	return false
 }
 
 func (UserService) GetRegEmailCode(c *gin.Context) {
+	email := c.PostForm("email")
+	if email == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The email cannot be empty"))
+	}
+	if existEmail(email) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email is already exists"))
+		return
+	}
 	getEmailCode(c, "注册")
 }
 
@@ -139,6 +151,10 @@ func (UserService) CheckForgetPassword(c *gin.Context) {
 	if util.VerifyCaptchaCode(id, code) {
 		user := userDao.FindUserWithEmail(email)
 		redisEmailCode := redisUtil.Get("emailCode:" + email).(string)
+		if !redisUtil.Has("email:" + email) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("Email verification code has expired or not been sent"))
+			return
+		}
 		if redisEmailCode == emailCode {
 			if user.User != "" {
 				token := util.GenerateTokenWithExpire(util.UserClaim{
