@@ -23,6 +23,7 @@ var passUrl = []string{
 	"/findTopicVersion",
 	"/findCommentByTopic",
 	"/search",
+	"/getForgetEmailCode",
 	"/checkForgetPassword",
 	"/getLike",
 	///message,/message/**,
@@ -58,8 +59,12 @@ func TokenIntercept() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, result.ErrorWithMsg("The token has expired"))
 			return
 		}
-		if userClaim.Role == "@ForgetPassword" && url == "/forgetPassword" {
-			c.Next()
+		if userClaim.Role == "@ForgetPassword" {
+			if url == "/forgetPassword" || url == "/checkForgetPassword" {
+				c.Next()
+				return
+			}
+			c.AbortWithStatusJSON(http.StatusUnauthorized, result.ErrorWithMsg("The current token does not allow access, please log in again"))
 			return
 		}
 		//token刷新
