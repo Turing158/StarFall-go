@@ -131,6 +131,14 @@ func (UserService) GetRegEmailCode(c *gin.Context) {
 }
 
 func (UserService) GetForgerPasswordEmailCode(c *gin.Context) {
+	email := c.PostForm("email")
+	if email == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The email cannot be empty"))
+	}
+	if !existEmail(email) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email is not exists"))
+		return
+	}
 	getEmailCode(c, "忘记密码")
 }
 
@@ -150,12 +158,12 @@ func (UserService) CheckForgetPassword(c *gin.Context) {
 
 	if util.VerifyCaptchaCode(id, code) {
 		user := userDao.FindUserWithEmail(email)
-		redisEmailCode := redisUtil.Get("emailCode:" + email).(string)
-		if !redisUtil.Has("email:" + email) {
+		if !redisUtil.Has("emailCode:" + email) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("Email verification code has expired or not been sent"))
 			return
 		}
-		if redisEmailCode == emailCode {
+		redisEmailCode := redisUtil.Get("emailCode:" + email).(string)
+		if strings.ToUpper(redisEmailCode) == strings.ToUpper(emailCode) {
 			if user.User != "" {
 				token := util.GenerateTokenWithExpire(util.UserClaim{
 					User:  "",
@@ -164,6 +172,7 @@ func (UserService) CheckForgetPassword(c *gin.Context) {
 				}, time.Minute*5)
 				redisUtil.Del("email:" + email)
 				c.JSON(200, result.OkWithObj(token))
+				return
 			}
 			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email is not exists"))
 			return

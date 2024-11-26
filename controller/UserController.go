@@ -12,6 +12,7 @@ func UserControllerRegister(engine *gin.Engine) {
 	engine.POST("/getUserInfo", userService.GetUserInfo)
 	engine.POST("/register", userService.Register)
 	engine.POST("/getEmailCode", userService.GetRegEmailCode)
+	engine.POST("/getForgetEmailCode", userService.GetForgerPasswordEmailCode)
 	engine.POST("/checkForgetPassword", userService.CheckForgetPassword)
 	engine.POST("/forgetPassword", userService.ForgerPassword)
 	engine.POST("/findUserByUser", userService.FindUserByUser)
