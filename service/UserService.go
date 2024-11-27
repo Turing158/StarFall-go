@@ -253,8 +253,16 @@ func (UserService) SettingEmail(c *gin.Context) {
 	newEmail := c.PostForm("newEmail")
 	oldEmailCode := strings.ToUpper(c.PostForm("oldEmailCode"))
 	newEmailCode := strings.ToUpper(c.PostForm("newEmailCode"))
-	redisOldEmailCode := redisUtil.Get("email:" + claim.Email).(string)
-	redisNewEmailCode := redisUtil.Get("email:" + newEmail).(string)
+	if !redisUtil.Has("emailCode:" + claim.Email) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Old Email code expired"))
+		return
+	}
+	if !redisUtil.Has("emailCode:" + newEmail) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The New Email code expired"))
+		return
+	}
+	redisOldEmailCode := redisUtil.Get("emailCode:" + claim.Email).(string)
+	redisNewEmailCode := redisUtil.Get("emailCode:" + newEmail).(string)
 	if oldEmailCode == redisOldEmailCode {
 		if newEmailCode == redisNewEmailCode {
 			tmpUser := userDao.FindUserWithEmail(newEmail)
@@ -267,8 +275,10 @@ func (UserService) SettingEmail(c *gin.Context) {
 				}
 				newToken := util.GenerateToken(newClaim)
 				c.JSON(200, result.OkWithObj(newToken))
+				return
 			}
-			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Old Email code is wrong"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The New Email is already exists"))
+			return
 		}
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The New Email code is wrong"))
 		return
