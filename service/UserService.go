@@ -122,6 +122,7 @@ func (UserService) GetRegEmailCode(c *gin.Context) {
 	email := c.PostForm("email")
 	if email == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The email cannot be empty"))
+		return
 	}
 	if existEmail(email) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email is already exists"))
@@ -134,6 +135,7 @@ func (UserService) GetForgerPasswordEmailCode(c *gin.Context) {
 	email := c.PostForm("email")
 	if email == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The email cannot be empty"))
+		return
 	}
 	if !existEmail(email) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The Email is not exists"))
@@ -234,8 +236,10 @@ func (UserService) SettingPassword(c *gin.Context) {
 				newPasswordAes, _ := util.AesEncrypt(newPassword)
 				userDao.UpdatePassword(user.User, newPasswordAes)
 				c.JSON(200, result.Ok())
+				return
 			}
 			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The OldPassword is wrong"))
+			return
 		}
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The token is not exist user"))
 		return

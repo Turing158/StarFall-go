@@ -313,6 +313,7 @@ func (TopicService) FindTopicInfoToEdit(c *gin.Context) {
 			return
 		}
 		c.JSON(200, result.OkWithObj(topicOut))
+		return
 	}
 	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("You are not allowed to edit this topic"))
 }
@@ -356,6 +357,7 @@ func (TopicService) UpdateTopic(c *gin.Context) {
 				return
 			}
 			c.JSON(200, result.Ok())
+			return
 		}
 		c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The code is wrong"))
 		return
@@ -381,6 +383,7 @@ func (TopicService) DeleteTopic(c *gin.Context) {
 			return
 		}
 		c.JSON(200, result.Ok())
+		return
 	}
 	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("You are not allowed to delete this topic"))
 }
