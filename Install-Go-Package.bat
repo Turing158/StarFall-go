@@ -24,4 +24,7 @@ go get -u github.com/mojocn/base64Captcha
 echo Downloading and installing: github.com/jordan-wright/email
 go get -u github.com/jordan-wright/email
 
+echo Downloading and installing: github.com/gorilla/websocket
+go get -u github.com/gorilla/websocket
+
 pause
