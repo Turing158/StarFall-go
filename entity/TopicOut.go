@@ -8,7 +8,7 @@ type TopicOut struct {
 	Content    string `json:"content,omitempty"`
 	Date       string `json:"date,omitempty"`
 	Download   string `json:"download,omitempty"`
-	EnTitle    string `json:"enTitle,omitempty"`
+	EnTitle    string `json:"enTitle,omitempty"  gorm:"column:enTitle"`
 	Exp        int64  `json:"exp,omitempty"`
 	ID         int64  `json:"id,omitempty" gorm:"primaryKey"`
 	Label      string `json:"label,omitempty"`
