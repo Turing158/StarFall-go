@@ -13,8 +13,9 @@ import (
 func main() {
 	engine := gin.Default()
 	util.InitRedis()
+	util.WebSocketInit()
 	defer util.CloseRedis()
-	//engine.Use(cors.Default())
+
 	config := cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
@@ -22,6 +23,7 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length", "Base64Img", "Captcha-Id", "Authorization"},
 		AllowCredentials: true,
 	}
+
 	engine.Use(cors.New(config))
 	engine.Use(Logger())
 	engine.Use(intercept.TokenIntercept())
@@ -38,6 +40,7 @@ func main() {
 	controller.OtherControllerRegister(engine)
 	controller.NoticeControllerRegister(engine)
 	controller.TopicControllerRegister(engine)
+	controller.MessageControllerRegister(engine)
 
 	engine.Run(":9090")
 }

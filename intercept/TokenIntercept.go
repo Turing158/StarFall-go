@@ -6,6 +6,7 @@ import (
 	"starfall-go/dao"
 	"starfall-go/entity"
 	"starfall-go/util"
+	"strings"
 	"time"
 )
 
@@ -26,17 +27,17 @@ var passUrl = []string{
 	"/getForgetEmailCode",
 	"/checkForgetPassword",
 	"/getLike",
-	///message,/message/**,
 }
 
 var dbUser = dao.UserDao{}
 
 func TokenIntercept() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//c.Next()
-		//return
-
 		url := c.Request.URL.Path
+		if strings.Contains(url, "/message") {
+			c.Next()
+			return
+		}
 		for s := range passUrl {
 			if passUrl[s] == url {
 				c.Next()
@@ -76,7 +77,6 @@ func TokenIntercept() gin.HandlerFunc {
 		newClaim := util.UserClaim{User: userObj.User, Email: userObj.Email, Role: userObj.Role}
 		newToken := util.GenerateToken(newClaim)
 		c.Header("Authorization", newToken)
-
 		c.Next()
 	}
 }
