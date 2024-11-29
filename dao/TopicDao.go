@@ -133,7 +133,7 @@ func (TopicDao) InsertComment(comment entity.CommentCreate) bool {
 	return util.Int64ToBool(re)
 }
 
-func (TopicDao) InsertTopic(topic entity.Topic) bool {
+func (TopicDao) InsertTopic(topic entity.TopicCreate) bool {
 	re := util.DB.Table("topic").Create(topic).RowsAffected
 	return util.Int64ToBool(re)
 }
@@ -162,8 +162,8 @@ func (TopicDao) UpdateLikeStateByTopicAndUser(id, status int64, user, date strin
 	return util.Int64ToBool(re)
 }
 
-func (TopicDao) UpdateTopicExpectCommentAndView(topic entity.Topic) bool {
-	re := util.DB.Table("topic t").Where("id = ?", topic.ID).First(&entity.Topic{}).Updates(entity.Topic{
+func (TopicDao) UpdateTopicExpectCommentAndView(topic entity.TopicCreate) bool {
+	re := util.DB.Table("topic t").Where("id = ?", topic.ID).First(&entity.TopicCreate{}).Updates(entity.TopicCreate{
 		Title:   topic.Title,
 		Label:   topic.Label,
 		User:    topic.User,

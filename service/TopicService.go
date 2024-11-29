@@ -232,7 +232,7 @@ func (TopicService) AppendTopic(c *gin.Context) {
 		}
 		id := topicDao.FindALl()[0].ID + 1
 		date := time.Now().Format("2006-01-02 15:04:05")
-		status1 := topicDao.InsertTopic(entity.Topic{
+		status1 := topicDao.InsertTopic(entity.TopicCreate{
 			ID:      id,
 			Title:   topic.Title,
 			User:    claim.User,
@@ -265,7 +265,10 @@ func (TopicService) AppendTopic(c *gin.Context) {
 			level++
 		}
 		userDao.UpdateExp(user.User, exp, level)
-		c.JSON(200, result.Ok())
+		c.JSON(200, result.OkWithObj(gin.H{
+			"exp": addExp,
+			"id":  id,
+		}))
 		return
 	}
 	c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("The code is wrong"))
@@ -323,7 +326,7 @@ func (TopicService) UpdateTopic(c *gin.Context) {
 	_, claim, _ := util.ParseToken(token)
 	var topic entity.TopicIn
 	if err := c.ShouldBindJSON(&topic); err != nil {
-		c.JSON(http.StatusBadRequest, result.ErrorWithMsg("Date Error"))
+		c.JSON(http.StatusBadRequest, result.ErrorWithMsg("Data Error"))
 		return
 	}
 	if isPromiseToEditTopicFunc(token, int(topic.ID)) == "ACCEPT" {
@@ -331,7 +334,7 @@ func (TopicService) UpdateTopic(c *gin.Context) {
 		if util.VerifyCaptchaCode(codeId, code) {
 			date := time.Now().Format("2006-01-02 15:04:05")
 			topicOut := topicDao.FindTopicById(int(topic.ID))
-			status1 := topicDao.UpdateTopicExpectCommentAndView(entity.Topic{
+			status1 := topicDao.UpdateTopicExpectCommentAndView(entity.TopicCreate{
 				ID:      topic.ID,
 				Title:   topic.Title,
 				User:    claim.User,
@@ -374,14 +377,10 @@ func (TopicService) DeleteTopic(c *gin.Context) {
 		return
 	}
 	if isPromiseToEditTopicFunc(token, id) == "ACCEPT" {
-		status1 := topicDao.DeleteCommentByTopicId(id)
-		status2 := topicDao.DeleteLikeLog(id)
-		status3 := topicDao.DeleteTopicItem(id)
-		status4 := topicDao.DeleteTopic(id)
-		if !(status1 && status2 && status3 && status4) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, result.ErrorWithMsg("DataSource error"))
-			return
-		}
+		topicDao.DeleteCommentByTopicId(id)
+		topicDao.DeleteLikeLog(id)
+		topicDao.DeleteTopicItem(id)
+		topicDao.DeleteTopic(id)
 		c.JSON(200, result.Ok())
 		return
 	}
