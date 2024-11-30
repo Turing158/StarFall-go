@@ -17,7 +17,7 @@ func (MessageDao) FindAllMsgByToUser(user string) (msgs []entity.Message) {
 }
 
 func (MessageDao) FindMsgByToUserAndFromUser(toUser, fromUser string) (msgs []entity.Message) {
-	util.DB.Table("chat_notice c").Select(selectMsg).Where("(to_user = ?1 and from_user = ?2) or (to_user = ?2 and from_user= ?1)", toUser, fromUser).Joins("join starfall.user fu on c.from_user = fu.user join starfall.user tu on c.to_user = tu.user").Order("date desc").Find(&msgs)
+	util.DB.Table("chat_notice c").Select(selectMsg).Where("(to_user = ? and from_user = ?) or (to_user = ? and from_user= ?)", toUser, fromUser, fromUser, toUser).Joins("join starfall.user fu on c.from_user = fu.user join starfall.user tu on c.to_user = tu.user").Order("date").Find(&msgs)
 	return
 }
 

@@ -17,8 +17,12 @@ func WebSocketInit() {
 	}
 }
 
-func SendMessageFunc(user, message string) {
+func WsSendMessageWithString(user, message string) {
+	WsSendMessage(user, []byte(message))
+}
+
+func WsSendMessage(user string, message []byte) {
 	if conn, ok := WsMap.Load(user); ok {
-		conn.(*websocket.Conn).WriteMessage(websocket.TextMessage, []byte(message))
+		conn.(*websocket.Conn).WriteMessage(websocket.TextMessage, message)
 	}
 }

@@ -9,7 +9,7 @@ var messageService = service.MessageService{}
 
 func MessageControllerRegister(engine *gin.Engine) {
 	engine.GET("/message/*token", messageService.HandleWebSocket)
-	engine.POST("/findMessageList")
-	engine.POST("/findMsgByToUserAndFromUser")
-	engine.POST("/sendMessage")
+	engine.POST("/findMessageList", messageService.GetMessageList)
+	engine.POST("/findMsgByToUserAndFromUser", messageService.GetMsgByToUserAndFromUser)
+	engine.POST("/sendMessage", messageService.SendMessage)
 }
