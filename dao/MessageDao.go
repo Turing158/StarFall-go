@@ -31,7 +31,7 @@ func (MessageDao) UpdateMsgContent(message entity.Message) bool {
 	return util.Int64ToBool(re)
 }
 
-func (MessageDao) InsertMsg(message entity.Message) bool {
+func (MessageDao) InsertMsg(message entity.MessageCreate) bool {
 	re := util.DB.Table("chat_notice c").Create(message).RowsAffected
 	return util.Int64ToBool(re)
 }
