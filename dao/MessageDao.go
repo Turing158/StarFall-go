@@ -27,11 +27,11 @@ func (MessageDao) FindFromUserMsgByFromUserAndToUser(fromUser, toUser string) (m
 }
 
 func (MessageDao) UpdateMsgContent(message entity.Message) bool {
-	re := util.DB.Table("chat_notice c").Where("from_user = ? and to_user = ? and date = ?", message.FromUser, message.ToUser, message.Date).First(&entity.Message{}).Update("content", message.Content).RowsAffected
+	re := util.DB.Table("chat_notice").Where("from_user = ? and to_user = ? and date = ?", message.FromUser, message.ToUser, message.Date).First(&entity.Message{}).Update("content", message.Content).RowsAffected
 	return util.Int64ToBool(re)
 }
 
 func (MessageDao) InsertMsg(message entity.MessageCreate) bool {
-	re := util.DB.Table("chat_notice c").Create(message).RowsAffected
+	re := util.DB.Table("chat_notice").Create(message).RowsAffected
 	return util.Int64ToBool(re)
 }
